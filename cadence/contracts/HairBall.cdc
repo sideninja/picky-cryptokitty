@@ -1,6 +1,6 @@
-import FungibleToken from 0x04
+import FungibleToken from 0xe03daebed8ca0615
 
-contract HairBall: FungibleToken {
+pub contract HairBall: FungibleToken {
 
   pub var totalSupply: UFix64
 
@@ -41,8 +41,6 @@ contract HairBall: FungibleToken {
     self.AdminStoragePath = /storage/Admin
     self.BalancePublicPath = /public/Balance
     self.ReceiverPublicPath = /public/Receiver
-
-    
   }
 
   pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {

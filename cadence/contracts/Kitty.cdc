@@ -1,4 +1,4 @@
-import NonFungibleToken from 0x03
+import NonFungibleToken from 0x045a1763c93006ca
 
 // Kitty contract
 pub contract Kitty: NonFungibleToken {
@@ -10,9 +10,9 @@ pub contract Kitty: NonFungibleToken {
     pub event Minted(id: UInt64)
 
     // Named Paths
-    pub let CollectionStoragePath: Path
+    pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: Path
-    pub let MinterStoragePath: Path
+    pub let MinterStoragePath: StoragePath
 
     // totalSupply
     // The total number of KittyItems that have been minted
@@ -107,3 +107,4 @@ pub contract Kitty: NonFungibleToken {
     
 
 }
+ 

@@ -9,8 +9,10 @@ pub contract Kitty: NonFungibleToken {
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
     pub event Minted(id: UInt64)
+
     pub event KittyFed()
     pub event KittyRefusedFood()
+    pub event KittyRanAway()
 
     // Named Paths
     pub let CollectionStoragePath: StoragePath
@@ -42,7 +44,7 @@ pub contract Kitty: NonFungibleToken {
         pub let id: UInt64
         
         // energy consumption for the kitty energy units per minutes
-        pub let energyConsumption: UFix64
+        pub let energyConsumptionPerMinute: UFix64
 
         // max energy kitty has when it's completely fed
         pub let maxEnergy: UFix64
@@ -58,7 +60,7 @@ pub contract Kitty: NonFungibleToken {
             self.id = id
             // make some default properties for the kitty, this could be upgraded to depend on the kitty genetics
             self.maxEnergy = 100.0
-            self.energyConsumption = 5.0
+            self.energyConsumptionPerMinute = 5.0
 
             // when the kitty is born it is fully fed
             self.energy = self.maxEnergy
@@ -69,7 +71,16 @@ pub contract Kitty: NonFungibleToken {
             // make a random chance for food to be discarded cuz I'm a cat and FUUU
             // todo make logic based on tokens success but also change interface to food token
             // if food.chance > random() { destroy food }
+            // emit KittyRefused() 
+            self.updateEnergy()
 
+            // double check if we forgot to destroy kitty with timers
+            if self.energy <= 0.0 {
+                destroy food
+                return
+            }
+
+            // todo change energy to get/set variable where you calculate current enrgy in getters and check in setters !!!!!!!!!!!!!!!!!!
             self.energy = self.energy + food.balance;
 
             // max out energy
@@ -77,11 +88,20 @@ pub contract Kitty: NonFungibleToken {
                 self.energy = self.maxEnergy
             }
 
-            destroy food;
+            destroy food
+
+            emit KittyFed()
         }
 
         pub fun updateEnergy() {
+            let lastFedDiffMinutes = getCurrentBlock().timestamp - self.lastFed / 1000.0 / 60.0
+            let consumedEnergy = self.energyConsumptionPerMinute * lastFedDiffMinutes
 
+            self.energy = self.energy - consumedEnergy
+
+            if self.energy <= 0.0 {
+                emit KittyRanAway()
+            }
         }
     }   
 
@@ -126,6 +146,24 @@ pub contract Kitty: NonFungibleToken {
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
             return &self.ownedNFTs[id] as! &NonFungibleToken.NFT
         }
+
+        // check if specific kitty is fed or else destroy it
+        pub fun checkKitty(id: UInt64) {
+            let kitty <- self.ownedNFTs.remove(key: id) as! @PickyKitty
+
+            // update kitty energy level
+            kitty.updateEnergy()
+
+            // if it is hungry destroy
+            if kitty.energy <= 0.0 {
+                destroy kitty
+            } // if fed return back
+            else {
+                let tmp <- self.ownedNFTs[id] <- (kitty as! @NonFungibleToken.NFT)
+                destroy tmp
+            }
+
+        }
     }
 
     // Mint NFT Resources
@@ -136,7 +174,8 @@ pub contract Kitty: NonFungibleToken {
             let uniqueId = Kitty.totalSupply % (10 as UInt64)
 
             emit Minted(id: uniqueId)
-            recipient.deposit(token: <- create Kitty.NFT(id: uniqueId))
+            let kitty <- create Kitty.PickyKitty(id: uniqueId)
+            recipient.deposit(token: <- (kitty as! @NonFungibleToken.NFT))
 
             Kitty.totalSupply = Kitty.totalSupply + (1 as UInt64)
         }

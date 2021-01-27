@@ -1,28 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const Account = require('./account');
-const Network = require('./network');
-const fcl = require("@onflow/fcl");
-const t = require("@onflow/types");
+const Network = require('../../lib/network');
+const Account = require('../../lib/account');
 
-const pubKey = 'c1185c32ee11a68bae4497dc9a505da630f3156dc9ab373557205f04b28ff67721f65fa5a7bcc4ec5ce8ed0add413732b167ddf8dc340a14b9279b493dbd7f3e';
-const privKey = '71245135bcdc198200e3115f5c72e2e498e21ce88e8f63357038e30b435c7002';
-
-function loadContract(name) {
-  return fs.readFileSync(
-    path.join(
-      __dirname,
-      `../cadence/contracts/${name}.cdc`
-    ),"utf8");
-}
-
-/**
- * Creates new account and deploys the contract to generated address
- * @param {string} name name of the contract
- * @param {string} file filename of the file containing contract
- * @param {account} auth authorized account used to pay, propose and authorize deployment
- * @param {network} network network object containing connection to api
- */
 async function createAccountAndDeploy(name, file, auth, network) {
   const account = new Account({ 
     publicKey: pubKey,

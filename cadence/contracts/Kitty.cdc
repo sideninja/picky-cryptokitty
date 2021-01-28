@@ -20,7 +20,6 @@ pub contract Kitty: NonFungibleToken {
     pub let MinterStoragePath: StoragePath
 
     // totalSupply
-    // The total number of KittyItems that have been minted
     pub var totalSupply: UInt64
 
     /** -------------
@@ -176,7 +175,6 @@ pub contract Kitty: NonFungibleToken {
     // Mint NFT Resources
     pub resource NFTMinter {
         
-        // mint NFTs but in a "pseudorandom" manner 
         pub fun mint(recipient: &{NonFungibleToken.CollectionPublic}) {
             let uniqueId = Kitty.totalSupply + (1 as UInt64)
 

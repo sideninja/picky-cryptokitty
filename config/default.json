@@ -8,5 +8,10 @@
   },
   "flow": {
     "network": "http://localhost:8080"
+  },
+  "locations": {
+    "contracts": "../../cadence/contracts/",
+    "transactions": "../../cadence/transactions/",
+    "scripts": "../../cadence/scripts/"
   }
 }

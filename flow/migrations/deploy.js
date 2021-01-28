@@ -1,50 +1,139 @@
 const fs = require('fs');
 const path = require('path');
+const config = require("config");
 const Network = require('../lib/network');
 const Account = require('../lib/account');
 
-const pubKey = '3b3ea4b6d02d488d47feeb07709b471be4d2dc50ffeeef143c48535ee959205fe865563fcd9ab0e144f11bd6f721bd8ca64908427e639993840cb4af651c2e20';
-const privKey = '7a794858e91c74a033bc4d756c651781c16715c07830da71e7b190685d43fcaa';
+let contractsAddresses = {};
 
-function loadContract(file) {fs
+function loadContract(file) {
   return fs.readFileSync(
-    path.join(__dirname, `../../cadence/contracts/${file}.cdc`), "utf8"
+    path.join(__dirname, `${config.get('locations.contracts')}${file}.cdc`), "utf8"
   )
 }
 
-async function createAccountAndDeploy(name, file, auth, network) {
-  const account = new Account({ 
-    publicKey: pubKey,
-    privateKey: privKey,
-    keyIndex: 0,
-    network 
-  });
+function loadTransaction(file) {
+  return fs.readFileSync(
+    path.join(__dirname, `${config.get('locations.transactions')}${file}.cdc`), "utf8"
+  )
+}
 
+function loadScript(file) {
+  return fs.readFileSync(
+    path.join(__dirname, `${config.get('locations.scripts')}${file}.cdc`), "utf8"
+  )
+}
+
+function addContractAddress(name, address) {
+  contractsAddresses[name] = address;
+}
+
+function getContractAddress(name) {
+  return contractsAddresses[name];
+}
+
+function insertAddresses(code) {
+  Object.keys(contractsAddresses)
+    .forEach(name => {
+      code = code.replace(
+        new RegExp(`0x${name}`, "gi"), getContractAddress(name)
+      )
+    });
+
+  return code;
+}
+
+/**
+ * Get main account optionally with address
+ * @param {Object} address - pass address if you want specific 
+ * account else new address will be created at generation 
+ * @Param {Object} network - network
+ */
+function getAccount({ address, network }) {
+  return new Account({ 
+    privateKey: config.get("accounts.main.privateKey"), 
+    publicKey: config.get("accounts.main.publicKey"), 
+    keyIndex: 0, 
+    network,
+    address
+  });
+}
+
+/**
+ * Get account where the contract was deployed
+ * @param {string} name name of the contract
+ * @param {network} network network
+ */
+function getAccountWithContract(name, network) {
+  let address = getContractAddress(name)
+  return getAccount({ address, network })
+}
+
+/**
+ * Get transaction file content and insert addresses
+ * @param {string} name of the transaction file
+ */
+function getTransaction(name) {
+  return insertAddresses(loadTransaction(name));
+}
+
+/**
+ * Get script file content and insert addresses
+ * @param {string} name of the script file 
+ */
+function getScript(name) {
+  return insertAddresses(loadScript(name));
+} 
+
+/**
+ * Get contract file and insert addresses
+ * @param {string} name of the contract file
+ */
+function getContract(name) {
+  return insertAddresses(loadContract(name));
+}
+
+/**
+ * Deploy contracts to address
+ * @param {string} name of the contract
+ * @param {string} file file name of the contract
+ * @param {account} auth authorizations and payer accounts
+ * @param {network} network for the deploy
+ */
+async function createAccountAndDeploy(name, auth, network) {
+  const account = getAccount({ network });
+
+  // create new account address 
   await account.create({
     proposer: auth,
     payer: auth,
     authorizations: [auth]
   });
   
-  await account.addContract(name, loadContract(file));
+  // deploy contract with name
+  await account.addContract(name, getContract(name));
+  // add new created contract with address and name to our list
+  addContractAddress(name, account.getAddress());
 
   console.log(`contract ${name} deployed to: ${account.getAddress()}`);
 }
 
-module.exports = async function() {
-  
+/**
+ * Deploys all the contracts to the flow and assigns addresses
+ */
+async function deployAll() {
   const network = new Network({ node: "http://localhost:8080" });
 
-  const mainAccount = new Account({ 
-    address: 'f8d6e0586b0a20c7', 
-    privateKey: 'bf9db4706c2fdb9011ee7e170ccac492f05427b96ab41d8bf2d8c58443704b76', 
-    publicKey: 'c8e020c9ddd636cdf82084958914610af86099c3e69c58b53994fdfe537673a261c71b2bcabdf2e5ed7d6bb4113dfe9762ce77adc4108e538d8488d1d4c90b1e', 
-    keyIndex: 0, 
+  const mainAccount = getAccount({
+    address: config.get("accounts.main.address"),
     network 
   });
   
-  await createAccountAndDeploy('FungibleToken', 'FungibleToken', mainAccount, network);
-  await createAccountAndDeploy('NonFungibleToken', 'NonFungibleToken', mainAccount, network);
-  await createAccountAndDeploy('Kitty', 'Kitty', mainAccount, network);
-  await createAccountAndDeploy('HairBall', 'HairBall', mainAccount, network); 
+  await createAccountAndDeploy('FungibleToken', mainAccount, network);
+  await createAccountAndDeploy('NonFungibleToken', mainAccount, network);
+  await createAccountAndDeploy('Kitty', mainAccount, network);
+  await createAccountAndDeploy('HairBall', mainAccount, network); 
 }
+
+
+module.exports = { deployAll, getContractAddress, getTransaction, getScript, getAccount, getAccountWithContract };

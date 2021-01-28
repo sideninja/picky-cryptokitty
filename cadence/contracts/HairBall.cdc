@@ -1,4 +1,4 @@
-import FungibleToken from 0xe03daebed8ca0615
+import FungibleToken from 0xFungibleToken
 
 pub contract HairBall: FungibleToken {
 

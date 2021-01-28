@@ -1,5 +1,5 @@
-import Kitty from 0x120e725050340cab
-import NonFungibleToken from 0x045a1763c93006ca
+import Kitty from 0xKitty
+import NonFungibleToken from 0xNonFungibleToken
 
 transaction {
     prepare(acct: AuthAccount) {
@@ -14,7 +14,8 @@ transaction {
             acct.save(<-collection, to: Kitty.CollectionStoragePath)
 
             // create a public capability for the collection
-            acct.link<&Kitty.Collection{NonFungibleToken.CollectionPublic /*, Kitty.KittyItemsCollectionPublic*/}>(Kitty.CollectionPublicPath, target: Kitty.CollectionStoragePath)
+            acct.link<&Kitty.Collection{NonFungibleToken.CollectionPublic, Kitty.KittyCollectionPublic}>(Kitty.CollectionPublicPath, target: Kitty.CollectionStoragePath)
         }
     }
 }
+ 

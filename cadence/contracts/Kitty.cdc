@@ -1,5 +1,5 @@
-import NonFungibleToken from 0x045a1763c93006ca
-import FungibleToken from 0xe03daebed8ca0615
+import NonFungibleToken from 0xNonFungibleToken
+import FungibleToken from 0xFungibleToken
 
 // Kitty contract
 pub contract Kitty: NonFungibleToken {
@@ -22,6 +22,14 @@ pub contract Kitty: NonFungibleToken {
     // totalSupply
     // The total number of KittyItems that have been minted
     pub var totalSupply: UInt64
+
+    /** -------------
+     * Interfaces
+     ---------------- */
+    
+    pub resource interface KittyCollectionPublic {
+        pub fun checkKitty(id: UInt64)
+    }
 
     // initializer
 	init() {
@@ -105,20 +113,17 @@ pub contract Kitty: NonFungibleToken {
         }
     }   
 
-    pub resource Collection: NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic {
+    pub resource Collection: NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, KittyCollectionPublic {
 
         // Dictionary to hold the NFTs in the Collection
         pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
-        pub var ownedKitties: @{UInt64: Kitty.NFT}
 
         init() {
             self.ownedNFTs <- {}
-            self.ownedKitties <- {}
         }
 
         destroy() {
             destroy self.ownedNFTs
-            destroy self.ownedKitties
         }
 
         // withdraw removes an NFT from the collection and moves it to the caller
@@ -152,8 +157,8 @@ pub contract Kitty: NonFungibleToken {
 
         // check if specific kitty is fed or else destroy it
         pub fun checkKitty(id: UInt64) {
-            let kitty <- self.ownedKitties.remove(key: id) ?? panic("no kittieeeesss")
-
+            let kitty <- self.ownedNFTs.remove(key: id)! as! @Kitty.NFT
+            
             // update kitty energy level
             kitty.updateEnergy()
 
@@ -173,10 +178,11 @@ pub contract Kitty: NonFungibleToken {
         
         // mint NFTs but in a "pseudorandom" manner 
         pub fun mint(recipient: &{NonFungibleToken.CollectionPublic}) {
-            let uniqueId = Kitty.totalSupply % (10 as UInt64)
+            let uniqueId = Kitty.totalSupply + (1 as UInt64)
 
             emit Minted(id: uniqueId)
             let kitty <- create Kitty.NFT(id: uniqueId)
+            
             recipient.deposit(token: <- (kitty as! @NonFungibleToken.NFT))
 
             Kitty.totalSupply = Kitty.totalSupply + (1 as UInt64)

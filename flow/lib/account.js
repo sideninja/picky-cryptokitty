@@ -178,7 +178,7 @@ class Account {
     return fcl.tx(response).onceSealed();
   }
 
-  async sendScript(script, args, network) {
+  async sendScript({ script, args, network }) {
     const response = await fcl.send([fcl.script`${script}`, fcl.args(args)], network.getHost());
     return await fcl.decode(response);
   }

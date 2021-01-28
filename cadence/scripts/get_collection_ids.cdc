@@ -1,5 +1,5 @@
-import Kitty from 0x120e725050340cab
-import NonFungibleToken from 0x045a1763c93006ca
+import Kitty from 0xKitty
+import NonFungibleToken from 0xNonFungibleToken
 
 pub fun main(account: Address): [UInt64] {
     let acct = getAccount(account)

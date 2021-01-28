@@ -1,6 +1,7 @@
 const { spawn, exec } = require("child_process");
 const config = require("config");
 
+
 function runEmulator() {
   // kill emulator if running (should make it os agnostic)
   //exec("kill $(lsof -ti:3569,8080)") 

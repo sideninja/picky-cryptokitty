@@ -1,6 +1,7 @@
 const EC = require("elliptic").ec;
 const SHA3 = require("sha3").SHA3;
-const sdk = require("@onflow/fcl");
+const fcl = require("@onflow/fcl");
+const sdk = require("@onflow/sdk");
 const rlp = require("@onflow/rlp");
 const t = require("@onflow/types");
 
@@ -67,8 +68,8 @@ class Account {
    * Return balance for this account
    */
   async getBalance() {
-    let response = await sdk.send([
-      sdk.getAccount(this.#address)
+    let response = await fcl.send([
+      fcl.getAccount(this.#address)
     ], this.#network.getHost());
 
     return response.account.balance;
@@ -85,8 +86,8 @@ class Account {
    * Load account from the flow network
    */
   async get() {
-    let { account } = await sdk.send([
-      sdk.getAccount(this.#address)
+    let { account } = await fcl.send([
+      fcl.getAccount(this.#address)
     ], this.#network.getHost());
     
     return account;
@@ -152,8 +153,8 @@ class Account {
   async addContract(name, code, proposer, authorizations, payer) {
     code = Buffer.from(code, "utf8").toString("hex");
     
-    const response = await sdk.send([
-      sdk.transaction`
+    const response = await fcl.send([
+      fcl.transaction`
         transaction(name: String, code: String) {
           let signer: AuthAccount
           prepare(signer: AuthAccount) {
@@ -167,15 +168,33 @@ class Account {
           }
         }
       `,
-      sdk.args([sdk.arg(name, t.String), sdk.arg(code, t.String)]),
-      sdk.proposer(proposer || await this.authorize()),
-      sdk.authorizations([authorizations || await this.authorize()]),
-      sdk.payer(payer || await this.authorize()),
-      sdk.limit(9999),
+      fcl.args([fcl.arg(name, t.String), fcl.arg(code, t.String)]),
+      fcl.proposer(proposer || await this.authorize()),
+      fcl.authorizations([authorizations || await this.authorize()]),
+      fcl.payer(payer || await this.authorize()),
+      fcl.limit(9999),
     ], this.#network.getHost());
 
-    return sdk.tx(response).onceSealed();
+    return fcl.tx(response).onceSealed();
   }
+
+  async sendScript(script, args, network) {
+    const response = await fcl.send([fcl.script`${script}`, fcl.args(args)], network.getHost());
+    return await fcl.decode(response);
+  }
+
+  async sendTransaction({ transaction, args, proposer, payer, authorizations, network }) {
+    const response = await fcl.send([
+      fcl.transaction`${transaction}`,
+      fcl.args(args),
+      fcl.proposer(await proposer.authorize()),
+      fcl.authorizations([ await authorizations[0].authorize() ]),
+      fcl.payer(await payer.authorize()),
+      fcl.limit(9999),
+    ], network.getHost());
+
+    return await fcl.tx(response).onceSealed();
+  };
 
   /**
    * Create an account on the flow network
@@ -191,8 +210,8 @@ class Account {
 
     const encodedKey = this.#encodePublicKey();
     
-    const response = await sdk.send([
-      sdk.transaction`
+    const response = await fcl.send([
+      fcl.transaction`
         transaction(publicKey: String) {
           let payer: AuthAccount
           prepare(payer: AuthAccount) {
@@ -204,13 +223,13 @@ class Account {
           }
         }
       `,
-      sdk.args([sdk.arg(encodedKey, t.String)]),
-      sdk.proposer(await proposer.authorize()),
-      sdk.authorizations([ await authorizations[0].authorize() ]),
-      sdk.payer(await payer.authorize()),
+      fcl.args([fcl.arg(encodedKey, t.String)]),
+      fcl.proposer(await proposer.authorize()),
+      fcl.authorizations([ await authorizations[0].authorize() ]),
+      fcl.payer(await payer.authorize()),
     ], this.#network.getHost());
 
-    const { events } = await sdk.tx(response).onceSealed();
+    const { events } = await fcl.tx(response).onceSealed();
     
     this.#address = events
       .find(d => d.type === "flow.AccountCreated")

@@ -1,5 +1,16 @@
-const Network = require('../../lib/network');
-const Account = require('../../lib/account');
+const fs = require('fs');
+const path = require('path');
+const Network = require('../lib/network');
+const Account = require('../lib/account');
+
+const pubKey = '3b3ea4b6d02d488d47feeb07709b471be4d2dc50ffeeef143c48535ee959205fe865563fcd9ab0e144f11bd6f721bd8ca64908427e639993840cb4af651c2e20';
+const privKey = '7a794858e91c74a033bc4d756c651781c16715c07830da71e7b190685d43fcaa';
+
+function loadContract(file) {fs
+  return fs.readFileSync(
+    path.join(__dirname, `../../cadence/contracts/${file}.cdc`), "utf8"
+  )
+}
 
 async function createAccountAndDeploy(name, file, auth, network) {
   const account = new Account({ 
@@ -20,7 +31,7 @@ async function createAccountAndDeploy(name, file, auth, network) {
   console.log(`contract ${name} deployed to: ${account.getAddress()}`);
 }
 
-(async function() {
+module.exports = async function() {
   
   const network = new Network({ node: "http://localhost:8080" });
 
@@ -35,10 +46,5 @@ async function createAccountAndDeploy(name, file, auth, network) {
   await createAccountAndDeploy('FungibleToken', 'FungibleToken', mainAccount, network);
   await createAccountAndDeploy('NonFungibleToken', 'NonFungibleToken', mainAccount, network);
   await createAccountAndDeploy('Kitty', 'Kitty', mainAccount, network);
-  await createAccountAndDeploy('HairBall', 'HairBall', mainAccount, network);
-
-  
-})().catch(err => {
-  console.log("error", err, err.stack)
-}) 
- 
+  await createAccountAndDeploy('HairBall', 'HairBall', mainAccount, network); 
+}

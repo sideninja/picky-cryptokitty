@@ -16,7 +16,7 @@ pub contract Kitty: NonFungibleToken {
 
     // Named Paths
     pub let CollectionStoragePath: StoragePath
-    pub let CollectionPublicPath: Path
+    pub let CollectionPublicPath: PublicPath
     pub let MinterStoragePath: StoragePath
 
     // totalSupply
@@ -39,7 +39,7 @@ pub contract Kitty: NonFungibleToken {
         emit ContractInitialized()
 	}
 
-    pub resource PickyKitty: NonFungibleToken.INFT {
+    pub resource NFT: NonFungibleToken.INFT {
         // unique id of kitty
         pub let id: UInt64
         
@@ -109,13 +109,16 @@ pub contract Kitty: NonFungibleToken {
 
         // Dictionary to hold the NFTs in the Collection
         pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
+        pub var ownedKitties: @{UInt64: Kitty.NFT}
 
         init() {
             self.ownedNFTs <- {}
+            self.ownedKitties <- {}
         }
 
         destroy() {
             destroy self.ownedNFTs
+            destroy self.ownedKitties
         }
 
         // withdraw removes an NFT from the collection and moves it to the caller
@@ -149,7 +152,7 @@ pub contract Kitty: NonFungibleToken {
 
         // check if specific kitty is fed or else destroy it
         pub fun checkKitty(id: UInt64) {
-            let kitty <- self.ownedNFTs.remove(key: id) as! @PickyKitty
+            let kitty <- self.ownedKitties.remove(key: id) ?? panic("no kittieeeesss")
 
             // update kitty energy level
             kitty.updateEnergy()
@@ -162,7 +165,6 @@ pub contract Kitty: NonFungibleToken {
                 let tmp <- self.ownedNFTs[id] <- (kitty as! @NonFungibleToken.NFT)
                 destroy tmp
             }
-
         }
     }
 
@@ -174,7 +176,7 @@ pub contract Kitty: NonFungibleToken {
             let uniqueId = Kitty.totalSupply % (10 as UInt64)
 
             emit Minted(id: uniqueId)
-            let kitty <- create Kitty.PickyKitty(id: uniqueId)
+            let kitty <- create Kitty.NFT(id: uniqueId)
             recipient.deposit(token: <- (kitty as! @NonFungibleToken.NFT))
 
             Kitty.totalSupply = Kitty.totalSupply + (1 as UInt64)

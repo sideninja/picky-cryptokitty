@@ -6,7 +6,7 @@
   "dependencies": {
     "@onflow/fcl": "0.0.66",
     "@onflow/rlp": "^0.0.3",
-    "@onflow/types": "^0.0.4",
+    "@onflow/types": "0.0.4",
     "elliptic": "^6.5.3",
     "@onflow/sdk": "0.0.43",
     "sha3": "^2.1.3"

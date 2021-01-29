@@ -13,6 +13,11 @@ transaction(account: Address, id: UInt64) {
         ?? panic("Could not get receiver NFT Collection")
 
       collection.checkKitty(id: id)
+
+      let kitty = collection.borrowKitty(id: id)
+      
+      log("energy")
+      log(kitty.energy)
     }
 }
  

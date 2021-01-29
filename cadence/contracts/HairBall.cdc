@@ -4,10 +4,10 @@ pub contract HairBall: FungibleToken {
 
   pub var totalSupply: UFix64
 
-  pub let VaultStoragePath: Path
-  pub let ReceiverPublicPath: Path
+  pub let VaultStoragePath: StoragePath
+  pub let ReceiverPublicPath: PublicPath
   pub let BalancePublicPath: Path
-  pub let AdminStoragePath: Path
+  pub let AdminStoragePath: StoragePath
 
   /// TokensInitialized
   ///
@@ -35,12 +35,15 @@ pub contract HairBall: FungibleToken {
 
 
   init() {
-    self.totalSupply = 0.0
-
     self.VaultStoragePath = /storage/HairBall
     self.AdminStoragePath = /storage/Admin
     self.BalancePublicPath = /public/Balance
     self.ReceiverPublicPath = /public/Receiver
+
+    self.totalSupply = 0.0
+    
+    let minter <- create Minter()
+    self.account.save(<-minter, to: self.AdminStoragePath)
   }
 
   pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {
@@ -71,12 +74,7 @@ pub contract HairBall: FungibleToken {
   }
 
   pub resource Minter {
-    pub let mintLimit: UFix64
-
-    init(mintLimit: UFix64) {
-      self.mintLimit = mintLimit
-    }
-
+    
     pub fun mintTokens(amount: UFix64): @HairBall.Vault {
       HairBall.totalSupply = HairBall.totalSupply + amount
       return <- create Vault(balance: amount)

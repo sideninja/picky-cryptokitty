@@ -118,22 +118,12 @@ async function createAccountAndDeploy(name, auth, network) {
   console.log(`contract ${name} deployed to: ${account.getAddress()}`);
 }
 
-/**
- * Deploys all the contracts to the flow and assigns addresses
- */
-async function deployAll() {
-  const network = new Network({ node: "http://localhost:8080" });
 
-  const mainAccount = getAccount({
-    address: config.get("accounts.main.address"),
-    network 
-  });
-  
-  await createAccountAndDeploy('FungibleToken', mainAccount, network);
-  await createAccountAndDeploy('NonFungibleToken', mainAccount, network);
-  await createAccountAndDeploy('Kitty', mainAccount, network);
-  await createAccountAndDeploy('HairBall', mainAccount, network); 
-}
-
-
-module.exports = { deployAll, getContractAddress, getTransaction, getScript, getAccount, getAccountWithContract };
+module.exports = { 
+  getContractAddress, 
+  getTransaction, 
+  getScript, 
+  getAccount, 
+  getAccountWithContract, 
+  createAccountAndDeploy 
+};

@@ -6,19 +6,39 @@ const config = require("config");
 const deployer = require('../migrations/deploy');
 
 
-
-(async() => {
-  //await helpers.runEmulator();
-  
-  await deployer.deployAll();
+(async () => {
 
   const network = new Network({ node: config.get("flow.network") });
-  
+
   // main account from flow emulator
-  const mainAccount = deployer.getAccount({ 
-    address: config.get("accounts.main.address"), 
+  const mainAccount = deployer.getAccount({
+    address: config.get("accounts.main.address"),
     network
   });
+
+  await deployer.createAccountAndDeploy(
+    'FungibleToken',
+    mainAccount,
+    network
+  );
+
+  await deployer.createAccountAndDeploy(
+    'NonFungibleToken', 
+    mainAccount, 
+    network
+  );
+
+  await deployer.createAccountAndDeploy(
+    'Kitty', 
+    mainAccount, 
+    network
+  );
+  
+  await deployer.createAccountAndDeploy(
+    'HairBall', 
+    mainAccount, 
+    network
+  );
 
   // user Joe account
   let accountJoe = deployer.getAccount({ network });
@@ -32,7 +52,7 @@ const deployer = require('../migrations/deploy');
   console.log('account joe created', accountJoe.getAddress());
 
   let result = await accountJoe.sendTransaction({
-    transaction: deployer.getTransaction('setup_account'),
+    transaction: deployer.getTransaction('setup_account_kitty'),
     args: [],
     proposer: accountJoe,
     payer: mainAccount,
@@ -40,15 +60,27 @@ const deployer = require('../migrations/deploy');
     network
   });
 
-  console.log('account joe setup');
+  console.log('account joe kitty setup');
+  console.log(result);
+
+  result = await accountJoe.sendTransaction({
+    transaction: deployer.getTransaction('setup_account_hairball'),
+    args: [],
+    proposer: accountJoe,
+    payer: mainAccount,
+    authorizations: [accountJoe],
+    network
+  });
+
+  console.log('account joe hairball setup');
   console.log(result);
 
   result = await accountJoe.sendScript({
-    script: deployer.getScript('get_collection_ids'), 
+    script: deployer.getScript('get_collection_ids'),
     args: [fcl.arg(accountJoe.getAddress(), t.Address)],
     network
   });
- 
+
   console.log('account joe collections');
   console.log(result);
 
@@ -66,18 +98,18 @@ const deployer = require('../migrations/deploy');
   console.log(result);
 
   result = await accountJoe.sendScript({
-    script: deployer.getScript('get_collection_ids'), 
+    script: deployer.getScript('get_collection_ids'),
     args: [fcl.arg(accountJoe.getAddress(), t.Address)],
     network
   });
- 
+
   console.log('account joe collections');
   console.log(result);
 
   result = await mainAccount.sendTransaction({
     transaction: deployer.getTransaction('check_kitten'),
     args: [
-      fcl.arg(accountJoe.getAddress(), t.Address), 
+      fcl.arg(accountJoe.getAddress(), t.Address),
       fcl.arg(1, t.UInt64)
     ],
     proposer: mainAccount,
@@ -85,9 +117,91 @@ const deployer = require('../migrations/deploy');
     payer: mainAccount,
     network
   });
-  
+
   console.log('check kitty');
   console.log(result);
+
+  const hairballAccount = deployer.getAccountWithContract('HairBall', network);
+  result = await hairballAccount.sendTransaction({
+    transaction: deployer.getTransaction('mint_hairballs'),
+    args: [
+      fcl.arg(accountJoe.getAddress(), t.Address),
+      fcl.arg("100.0", t.UFix64)
+    ],
+    proposer: hairballAccount,
+    authorizations: [hairballAccount],
+    payer: mainAccount,
+    network
+  });
+
+  console.log('mint hairballs');
+  console.log(result);
+
+  result = await mainAccount.sendScript({
+    script: deployer.getScript('get_hairball_balance'),
+    args: [fcl.arg(accountJoe.getAddress(), t.Address)],
+    network
+  });
+
+  console.log('hairball balance');
+  console.log(result);
+
+  result = await mainAccount.sendTransaction({
+    transaction: deployer.getTransaction('check_kitten'),
+    args: [
+      fcl.arg(accountJoe.getAddress(), t.Address),
+      fcl.arg(1, t.UInt64)
+    ],
+    proposer: mainAccount,
+    authorizations: [mainAccount],
+    payer: mainAccount,
+    network
+  });
+
+  console.log('check kitty again');
+  console.log(result);
+
+  result = await accountJoe.sendTransaction({
+    transaction: deployer.getTransaction('feed_kitten'),
+    args: [
+      fcl.arg(1, t.UInt64),
+      fcl.arg("5.0", t.UFix64)
+    ],
+    proposer: accountJoe,
+    authorizations: [accountJoe],
+    payer: accountJoe,
+    network
+  });
+
+  console.log("hairball feeded");
+  console.log(result);
+  
+  result = await mainAccount.sendTransaction({
+    transaction: deployer.getTransaction('check_kitten'),
+    args: [
+      fcl.arg(accountJoe.getAddress(), t.Address),
+      fcl.arg(1, t.UInt64)
+    ],
+    proposer: mainAccount,
+    authorizations: [mainAccount],
+    payer: mainAccount,
+    network
+  });
+
+  console.log('check kitty again');
+  console.log(result);
+
+  result = await mainAccount.sendScript({
+    script: deployer.getScript('get_hairball_balance'),
+    args: [fcl.arg(accountJoe.getAddress(), t.Address)],
+    network
+  });
+
+  console.log('new hairball balance');
+  console.log(result);
+
+
+
 
 
 })().catch(err => console.log(err));

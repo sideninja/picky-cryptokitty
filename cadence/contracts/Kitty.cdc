@@ -28,6 +28,7 @@ pub contract Kitty: NonFungibleToken {
     
     pub resource interface KittyCollectionPublic {
         pub fun checkKitty(id: UInt64)
+        pub fun borrowKitty(id: UInt64): &Kitty.NFT
     }
 
     // initializer
@@ -60,7 +61,7 @@ pub contract Kitty: NonFungibleToken {
         pub var energy: UFix64 // change to UInt8 with food type
         
         // track when the kitty was last fed
-        pub var lastFed: UFix64
+        pub(set) var lastFed: UFix64  // todo change back bugfix
         
 
         init(id: UInt64) {
@@ -71,7 +72,7 @@ pub contract Kitty: NonFungibleToken {
 
             // when the kitty is born it is fully fed
             self.energy = self.maxEnergy
-            self.lastFed = getCurrentBlock().timestamp
+            self.lastFed = 0.0 //getCurrentBlock().height // todo change back to timestamp workaround a bug  !!!!
         }
 
         pub fun feedMe(food: @FungibleToken.Vault) {
@@ -101,7 +102,7 @@ pub contract Kitty: NonFungibleToken {
         }
 
         pub fun updateEnergy() {
-            let lastFedDiffMinutes = getCurrentBlock().timestamp - self.lastFed / 1000.0 / 60.0
+            let lastFedDiffMinutes = self.lastFed; //getCurrentBlock().timestamp - self.lastFed / 1000.0 / 60.0
             let consumedEnergy = self.energyConsumptionPerMinute * lastFedDiffMinutes
 
             self.energy = self.energy - consumedEnergy
@@ -154,10 +155,18 @@ pub contract Kitty: NonFungibleToken {
             return &self.ownedNFTs[id] as! &NonFungibleToken.NFT
         }
 
+        pub fun borrowKitty(id: UInt64): &Kitty.NFT {
+            let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            return ref as! &Kitty.NFT
+        }
+
         // check if specific kitty is fed or else destroy it
         pub fun checkKitty(id: UInt64) {
             let kitty <- self.ownedNFTs.remove(key: id)! as! @Kitty.NFT
             
+            // todo remove this after bugfix
+            kitty.lastFed = kitty.lastFed + 2.0
+
             // update kitty energy level
             kitty.updateEnergy()
 

@@ -7,6 +7,7 @@ Demo project meant to demonstrate capabilites of Flow. PickyCryptokitty is decen
 ### Preview Project :tada:
 [![Watch the demo](https://i.vimeocdn.com/video/1049645083_620.jpg)](https://player.vimeo.com/video/507129273)
 
+Better quality video: https://files.fm/f/dze8qdezs#
 
 ## Architecture :smiley_cat:
 

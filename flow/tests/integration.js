@@ -3,7 +3,7 @@ const Account = require('../lib/account');
 const fcl = require("@onflow/fcl");
 const t = require("@onflow/types");
 const config = require("config");
-const deployer = require('../migrations/deploy');
+const deployer = require('../migrations/deployer');
 
 
 (async () => {
@@ -56,8 +56,7 @@ const deployer = require('../migrations/deploy');
     args: [],
     proposer: accountJoe,
     payer: mainAccount,
-    authorizations: [accountJoe],
-    network
+    authorizations: [accountJoe]
   });
 
   console.log('account joe kitty setup');
@@ -68,8 +67,7 @@ const deployer = require('../migrations/deploy');
     args: [],
     proposer: accountJoe,
     payer: mainAccount,
-    authorizations: [accountJoe],
-    network
+    authorizations: [accountJoe]
   });
 
   console.log('account joe hairball setup');
@@ -77,8 +75,7 @@ const deployer = require('../migrations/deploy');
 
   result = await accountJoe.sendScript({
     script: deployer.getScript('get_collection_ids'),
-    args: [fcl.arg(accountJoe.getAddress(), t.Address)],
-    network
+    args: [fcl.arg(accountJoe.getAddress(), t.Address)]
   });
 
   console.log('account joe collections');
@@ -90,8 +87,7 @@ const deployer = require('../migrations/deploy');
     args: [fcl.arg(accountJoe.getAddress(), t.Address)],
     proposer: kittyAccount,
     payer: kittyAccount,
-    authorizations: [kittyAccount],
-    network
+    authorizations: [kittyAccount]
   });
 
   console.log('kitty minting');
@@ -99,8 +95,7 @@ const deployer = require('../migrations/deploy');
 
   result = await accountJoe.sendScript({
     script: deployer.getScript('get_collection_ids'),
-    args: [fcl.arg(accountJoe.getAddress(), t.Address)],
-    network
+    args: [fcl.arg(accountJoe.getAddress(), t.Address)]
   });
 
   console.log('account joe collections');
@@ -114,8 +109,7 @@ const deployer = require('../migrations/deploy');
     ],
     proposer: mainAccount,
     authorizations: [mainAccount],
-    payer: mainAccount,
-    network
+    payer: mainAccount
   });
 
   console.log('check kitty');
@@ -130,8 +124,7 @@ const deployer = require('../migrations/deploy');
     ],
     proposer: hairballAccount,
     authorizations: [hairballAccount],
-    payer: mainAccount,
-    network
+    payer: mainAccount
   });
 
   console.log('mint hairballs');
@@ -139,8 +132,7 @@ const deployer = require('../migrations/deploy');
 
   result = await mainAccount.sendScript({
     script: deployer.getScript('get_hairball_balance'),
-    args: [fcl.arg(accountJoe.getAddress(), t.Address)],
-    network
+    args: [fcl.arg(accountJoe.getAddress(), t.Address)]
   });
 
   console.log('hairball balance');
@@ -154,8 +146,7 @@ const deployer = require('../migrations/deploy');
     ],
     proposer: mainAccount,
     authorizations: [mainAccount],
-    payer: mainAccount,
-    network
+    payer: mainAccount
   });
 
   console.log('check kitty again');
@@ -169,8 +160,7 @@ const deployer = require('../migrations/deploy');
     ],
     proposer: accountJoe,
     authorizations: [accountJoe],
-    payer: accountJoe,
-    network
+    payer: accountJoe
   });
 
   console.log("hairball feeded");
@@ -184,8 +174,7 @@ const deployer = require('../migrations/deploy');
     ],
     proposer: mainAccount,
     authorizations: [mainAccount],
-    payer: mainAccount,
-    network
+    payer: mainAccount
   });
 
   console.log('check kitty again');
@@ -193,8 +182,7 @@ const deployer = require('../migrations/deploy');
 
   result = await mainAccount.sendScript({
     script: deployer.getScript('get_hairball_balance'),
-    args: [fcl.arg(accountJoe.getAddress(), t.Address)],
-    network
+    args: [fcl.arg(accountJoe.getAddress(), t.Address)]
   });
 
   console.log('new hairball balance');

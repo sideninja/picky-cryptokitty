@@ -177,12 +177,15 @@ class Account {
     return fcl.tx(response).onceSealed();
   }
 
-  async sendScript({ script, args, network }) {
-    const response = await fcl.send([fcl.script`${script}`, fcl.args(args)], network.getHost());
+  async sendScript({ script, args }) {
+    const response = await fcl.send(
+      [fcl.script`${script}`, fcl.args(args)], 
+      this.#network.getHost()
+    );
     return await fcl.decode(response);
   }
 
-  async sendTransaction({ transaction, args, proposer, payer, authorizations, network }) {
+  async sendTransaction({ transaction, args, proposer, payer, authorizations }) {
     const response = await fcl.send([
       fcl.transaction`${transaction}`,
       fcl.args(args),
@@ -190,7 +193,7 @@ class Account {
       fcl.authorizations([ await authorizations[0].authorize() ]),
       fcl.payer(await payer.authorize()),
       fcl.limit(9999),
-    ], network.getHost());
+    ], this.#network.getHost());
 
     return await fcl.tx(response).onceSealed();
   };

@@ -392,7 +392,7 @@
     "@onflow/protobuf" "0.1.6"
     "@onflow/response" "0.0.2"
 
-"@onflow/types@^0.0.4":
+"@onflow/types@0.0.4":
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/@onflow/types/-/types-0.0.4.tgz#d4a9c3e301d23182dd256b73d3679c952fe653f0"
   integrity sha512-47r0qTM45mR7FSvyEE0njGljkpgy3MCf/2W82pfZ/PTFGWr1nsGV/4j2bUfK9Sry4Ymz2W20iRZVP3xpqOhqGw==

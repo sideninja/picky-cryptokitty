@@ -13,5 +13,10 @@
     "contracts": "../../cadence/contracts/",
     "transactions": "../../cadence/transactions/",
     "scripts": "../../cadence/scripts/"
+  },
+  "api": {
+    "rest": {
+      "port": 8888
+    }
   }
 }

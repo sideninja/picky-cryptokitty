@@ -1,7 +1,13 @@
-const { transaction } = require('@onflow/sdk-build-transaction');
 const deployer = require('../../../flow/migrations/deployer');
+const flow = require('../../../flow/lib/service');
 
-async function get(type, name) {
+
+/**
+ * Get a cadance file replaced with address by name and type
+ * @param {*} type type of interaction - transaction / script
+ * @param {*} name name of the interaction file
+ */
+async function getCadance(type, name) {
   if (type === 'scripts') {
     return deployer.getScript(name);
   }
@@ -13,7 +19,10 @@ async function get(type, name) {
   }
 }
 
-async function getAll() {
+/**
+ * Get all deployed files for cadance replaced with deployed addresses
+ */
+async function getAllCadance() {
   return {
     get_hairball_balance: deployer.getScript('get_hairball_balance'),
     get_collection_ids: deployer.getScript('get_collection_ids'),
@@ -23,5 +32,15 @@ async function getAll() {
   };
 }
 
+/**
+ * Mint new tokens and send them to the address
+ * @param {string} address of the wallet to receive tokens
+ * @param {string} amount of the tokens to receive
+ */
+async function mintTokens(address) {
+  return flow.mintHairBalls(address, "10.0");
+}
 
-module.exports = { get, getAll };
+
+
+module.exports = { getCadance, getAllCadance, mintTokens };

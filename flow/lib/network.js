@@ -1,4 +1,3 @@
-const fcl = require("@onflow/fcl");
 
 class Network {
   #host

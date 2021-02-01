@@ -1,7 +1,6 @@
 const EC = require("elliptic").ec;
 const SHA3 = require("sha3").SHA3;
 const fcl = require("@onflow/fcl");
-const sdk = require("@onflow/sdk");
 const rlp = require("@onflow/rlp");
 const t = require("@onflow/types");
 

@@ -1,5 +1,4 @@
-
-# Picky CryptoKitty
+![Picky CryptoKitty](./banner.svg "Picky CryptoKitty")
 
 Demo project meant to demonstrate capabilites of Flow. PickyCryptokitty is decentralized application or dapp built with Cadence and lives on the flow network. Backend is built using node.js and minimialistic client with only js/jquery for its simplicity. 
 

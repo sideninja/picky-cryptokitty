@@ -41,6 +41,18 @@ async function mintTokens(address) {
   return flow.mintHairBalls(address, "10.0");
 }
 
+/**
+ * Mint new kitten for address
+ * @param {*} address receiver of kitten
+ */
+async function mintKittens(address) {
+  return flow.mintKittens(address);
+}
 
 
-module.exports = { getCadance, getAllCadance, mintTokens };
+module.exports = { 
+  getCadance, 
+  getAllCadance, 
+  mintTokens, 
+  mintKittens 
+};

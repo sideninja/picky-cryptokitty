@@ -1,17 +1,18 @@
 const config = require('config');
 const restify = require('restify');
-const corsMiddleware = require('restify-cors-middleware')
 const flow = require('./flow');
 
 var server = restify.createServer();
 
-const cors = corsMiddleware({
-  origins: ['*']
-});
- 
+
 // server configuration
-server.pre(cors.preflight);
-server.use(cors.actual);
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
 server.use(restify.plugins.bodyParser({ mapParams: true }));
 
 // handler helper for requests
@@ -46,14 +47,14 @@ addHandler(
 addHandler(
   'get', 
   '/flow/:type/:name', 
-  req => flow.get(req.params.type, req.params.name)
+  req => flow.getCadance(req.params.type, req.params.name)
 );
 
 // get all cadance interactions
 addHandler(
   'get',
   '/flow',
-  req => flow.getAll()
+  req => flow.getAllCadance()
 )
 
 

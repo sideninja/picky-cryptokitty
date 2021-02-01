@@ -1,14 +1,14 @@
 import Kitty from 0xKitty
-import HairBall from 0xHairBall
+import Tuna from 0xTuna
 
 transaction(id: UInt64, amount: UFix64) {
-    let vault: &HairBall.Vault
+    let vault: &Tuna.Vault
     let collection: &Kitty.Collection
 
     prepare(acct: AuthAccount) {
       self.vault = acct
-        .borrow<&HairBall.Vault>(from: HairBall.VaultStoragePath)
-        ?? panic("No vault for hairball")
+        .borrow<&Tuna.Vault>(from: Tuna.VaultStoragePath)
+        ?? panic("No vault for tuna")
 
       self.collection = acct
         .borrow<&Kitty.Collection>(from: Kitty.CollectionStoragePath)

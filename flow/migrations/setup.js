@@ -31,7 +31,7 @@ async function init() {
   );
   
   await deployer.createAccountAndDeploy(
-    'HairBall', 
+    'Tuna', 
     mainAccount, 
     network
   );

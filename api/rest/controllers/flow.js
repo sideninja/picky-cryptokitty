@@ -1,6 +1,5 @@
 const deployer = require('../../../flow/migrations/deployer');
 const flow = require('../../../flow/lib/service');
-const main = require('../../index');
 
 // workaround a bug
 const kittens = [];
@@ -27,10 +26,10 @@ async function getCadance(type, name) {
  */
 async function getAllCadance() {
   return {
-    get_hairball_balance: deployer.getScript('get_hairball_balance'),
+    get_tuna_balance: deployer.getScript('get_tuna_balance'),
     get_collection_ids: deployer.getScript('get_collection_ids'),
     feed_kitten: deployer.getTransaction('feed_kitten'),
-    setup_account_hairball: deployer.getTransaction('setup_account_hairball'),
+    setup_account_tuna: deployer.getTransaction('setup_account_tuna'),
     setup_account_kitty: deployer.getTransaction('setup_account_kitty'),
     get_kitten: deployer.getScript('get_kitten')
   };
@@ -42,7 +41,7 @@ async function getAllCadance() {
  * @param {string} amount of the tokens to receive
  */
 async function mintTokens(address) {
-  return flow.mintHairBalls(address, "10.0");
+  return flow.mintTuna(address, "10.0");
 }
 
 /**

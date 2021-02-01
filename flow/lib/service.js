@@ -3,24 +3,24 @@ const fcl = require('@onflow/fcl');
 const t = require('@onflow/types');
 
 /**
- * Mint hairballs ft token for account and specific amount
+ * Mint tuna ft token for account and specific amount
  * @param {*} address address of the receiver of tokens
  * @param {*} amount amount of tokens to be minted
  */
-async function mintHairBalls(address, amount) {
+async function mintTuna(address, amount) {
   console.log(`minting ${amount} tokens for ${address}`);
 
-  const hairballAccount = deployer.getAccountWithContract('HairBall');
+  const tunaAccount = deployer.getAccountWithContract('Tuna');
 
-  result = await hairballAccount.sendTransaction({
-    transaction: deployer.getTransaction('mint_hairballs'),
+  result = await tunaAccount.sendTransaction({
+    transaction: deployer.getTransaction('mint_tuna'),
     args: [
       fcl.arg(address, t.Address),
       fcl.arg(amount, t.UFix64)
     ],
-    proposer: hairballAccount,
-    authorizations: [hairballAccount],
-    payer: hairballAccount
+    proposer: tunaAccount,
+    authorizations: [tunaAccount],
+    payer: tunaAccount
   });
 
   return result;
@@ -67,4 +67,4 @@ async function updateKitten(address) {
 }
 
 
-module.exports = { mintHairBalls, mintKittens, updateKitten };
+module.exports = { mintTuna, mintKittens, updateKitten };

@@ -27,7 +27,7 @@ const deployer = require('../migrations/deployer');
   );
   
   await deployer.createAccountAndDeploy(
-    'HairBall', 
+    'Tuna', 
     mainAccount
   );
 
@@ -54,14 +54,14 @@ const deployer = require('../migrations/deployer');
   console.log(result);
 
   result = await accountJoe.sendTransaction({
-    transaction: deployer.getTransaction('setup_account_hairball'),
+    transaction: deployer.getTransaction('setup_account_tuna'),
     args: [],
     proposer: accountJoe,
     payer: mainAccount,
     authorizations: [accountJoe]
   });
 
-  console.log('account joe hairball setup');
+  console.log('account joe tuna setup');
   console.log(result);
 
   result = await accountJoe.sendScript({
@@ -106,27 +106,27 @@ const deployer = require('../migrations/deployer');
   console.log('check kitty');
   console.log(result);
 
-  const hairballAccount = deployer.getAccountWithContract('HairBall');
-  result = await hairballAccount.sendTransaction({
-    transaction: deployer.getTransaction('mint_hairballs'),
+  const tunaAccount = deployer.getAccountWithContract('Tuna');
+  result = await tunaAccount.sendTransaction({
+    transaction: deployer.getTransaction('mint_tuna'),
     args: [
       fcl.arg(accountJoe.getAddress(), t.Address),
       fcl.arg("100.0", t.UFix64)
     ],
-    proposer: hairballAccount,
-    authorizations: [hairballAccount],
+    proposer: tunaAccount,
+    authorizations: [tunaAccount],
     payer: mainAccount
   });
 
-  console.log('mint hairballs');
+  console.log('mint tuna');
   console.log(result);
 
   result = await mainAccount.sendScript({
-    script: deployer.getScript('get_hairball_balance'),
+    script: deployer.getScript('get_tuna_balance'),
     args: [fcl.arg(accountJoe.getAddress(), t.Address)]
   });
 
-  console.log('hairball balance');
+  console.log('tuna balance');
   console.log(result);
 
   result = await mainAccount.sendTransaction({
@@ -154,7 +154,7 @@ const deployer = require('../migrations/deployer');
     payer: accountJoe
   });
 
-  console.log("hairball feeded");
+  console.log("tuna feeded");
   console.log(result);
   
   result = await mainAccount.sendTransaction({
@@ -172,11 +172,11 @@ const deployer = require('../migrations/deployer');
   console.log(result);
 
   result = await mainAccount.sendScript({
-    script: deployer.getScript('get_hairball_balance'),
+    script: deployer.getScript('get_tuna_balance'),
     args: [ fcl.arg(accountJoe.getAddress(), t.Address) ]
   });
 
-  console.log('new hairball balance');
+  console.log('new tuna balance');
   console.log(result);
 
 

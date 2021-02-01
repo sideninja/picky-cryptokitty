@@ -1,6 +1,6 @@
 import FungibleToken from 0xFungibleToken
 
-pub contract HairBall: FungibleToken {
+pub contract Tuna: FungibleToken {
 
   pub var totalSupply: UFix64
 
@@ -35,7 +35,7 @@ pub contract HairBall: FungibleToken {
 
 
   init() {
-    self.VaultStoragePath = /storage/HairBall
+    self.VaultStoragePath = /storage/Tuna
     self.AdminStoragePath = /storage/Admin
     self.BalancePublicPath = /public/Balance
     self.ReceiverPublicPath = /public/Receiver
@@ -63,7 +63,7 @@ pub contract HairBall: FungibleToken {
     pub fun withdraw(amount: UFix64): @Vault {
       self.balance = self.balance - amount
 
-      emit HairBall.TokensWithdrawn(amount: amount, from: self.owner?.address)
+      emit Tuna.TokensWithdrawn(amount: amount, from: self.owner?.address)
       return <- create Vault(balance: amount)
     }
 
@@ -75,8 +75,8 @@ pub contract HairBall: FungibleToken {
 
   pub resource Minter {
     
-    pub fun mintTokens(amount: UFix64): @HairBall.Vault {
-      HairBall.totalSupply = HairBall.totalSupply + amount
+    pub fun mintTokens(amount: UFix64): @Tuna.Vault {
+      Tuna.totalSupply = Tuna.totalSupply + amount
       return <- create Vault(balance: amount)
     }
   }

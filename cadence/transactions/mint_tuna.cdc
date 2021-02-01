@@ -1,12 +1,12 @@
-import HairBall from 0xHairball
+import Tuna from 0xTuna
 import FungibleToken from 0xFungibleToken
 
 transaction(recipient: Address, amount: UFix64) {
-    let minter: &HairBall.Minter
+    let minter: &Tuna.Minter
 
     prepare(acct: AuthAccount) {
       self.minter = acct
-        .borrow<&HairBall.Minter>(from: HairBall.AdminStoragePath)
+        .borrow<&Tuna.Minter>(from: Tuna.AdminStoragePath)
         ?? panic("Could not borrow FT minter")
     }
 
@@ -14,7 +14,7 @@ transaction(recipient: Address, amount: UFix64) {
       let rec = getAccount(recipient)
 
       let receiver = rec
-        .getCapability(HairBall.ReceiverPublicPath)!
+        .getCapability(Tuna.ReceiverPublicPath)!
         .borrow<&{FungibleToken.Receiver}>()
         ?? panic("Could not get FT receiver")
 

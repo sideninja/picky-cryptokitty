@@ -2,7 +2,7 @@
 
 body {
   background: rgb(181,33,165);
-  background: radial-gradient(circle, rgba(181,33,165,0.6587009803921569) 51%, rgba(115,0,255,0.5858718487394958) 98%);
+  background: radial-gradient(circle, #b521a5a8 51%, #7300ff95 98%);
   font-family: 'Raleway', sans-serif;
   color: #333;
 }

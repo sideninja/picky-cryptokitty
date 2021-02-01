@@ -31,7 +31,7 @@ async function createAndSetupAccount(flow) {
   console.log(`account created: ${userAccount.getAddress()}`);
   
   let result = await userAccount.sendTransaction({
-    transaction: flow.setup_account_hairball,
+    transaction: flow.setup_account_tuna,
     args: [],
     proposer: userAccount,
     payer: userAccount,
@@ -57,12 +57,12 @@ async function createAndSetupAccount(flow) {
  * @param {*} userAccount 
  */
 async function updateBalance(flow, userAccount) {
-  // fetch hairball balance
+  // fetch tuna balance
   let balance = await userAccount.sendScript({
-    script: flow.get_hairball_balance,
+    script: flow.get_tuna_balance,
     args: [ fcl.arg(userAccount.getAddress(), t.Address) ]
   });
-  console.log('hairball balance', balance);
+  console.log('tuna balance', balance);
   
   updateBalanceUI(balance);
 }

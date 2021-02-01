@@ -1,5 +1,3 @@
-const Network = require('../lib/network');
-const Account = require('../lib/account');
 const fcl = require("@onflow/fcl");
 const t = require("@onflow/types");
 const config = require("config");
@@ -8,40 +6,33 @@ const deployer = require('../migrations/deployer');
 
 (async () => {
 
-  const network = new Network({ node: config.get("flow.network") });
-
   // main account from flow emulator
   const mainAccount = deployer.getAccount({
-    address: config.get("accounts.main.address"),
-    network
+    address: config.get("accounts.main.address")
   });
 
   await deployer.createAccountAndDeploy(
     'FungibleToken',
-    mainAccount,
-    network
+    mainAccount
   );
 
   await deployer.createAccountAndDeploy(
     'NonFungibleToken', 
-    mainAccount, 
-    network
+    mainAccount
   );
 
   await deployer.createAccountAndDeploy(
     'Kitty', 
-    mainAccount, 
-    network
+    mainAccount
   );
   
   await deployer.createAccountAndDeploy(
     'HairBall', 
-    mainAccount, 
-    network
+    mainAccount
   );
 
   // user Joe account
-  let accountJoe = deployer.getAccount({ network });
+  let accountJoe = deployer.getAccount();
 
   accountJoe = await accountJoe.create({
     proposer: mainAccount,
@@ -81,7 +72,7 @@ const deployer = require('../migrations/deployer');
   console.log('account joe collections');
   console.log(result);
 
-  const kittyAccount = deployer.getAccountWithContract('Kitty', network);
+  const kittyAccount = deployer.getAccountWithContract('Kitty');
   result = await kittyAccount.sendTransaction({
     transaction: deployer.getTransaction('mint_kittens'),
     args: [fcl.arg(accountJoe.getAddress(), t.Address)],
@@ -115,7 +106,7 @@ const deployer = require('../migrations/deployer');
   console.log('check kitty');
   console.log(result);
 
-  const hairballAccount = deployer.getAccountWithContract('HairBall', network);
+  const hairballAccount = deployer.getAccountWithContract('HairBall');
   result = await hairballAccount.sendTransaction({
     transaction: deployer.getTransaction('mint_hairballs'),
     args: [

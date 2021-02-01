@@ -4,6 +4,8 @@ const config = require("config");
 const Network = require('../lib/network');
 const Account = require('../lib/account');
 
+const defaultNetwork = new Network({ node: config.get("flow.network") });
+
 let contractsAddresses = {};
 
 function loadContract(file) {
@@ -54,7 +56,7 @@ function getAccount({ address, network }) {
     privateKey: config.get("accounts.main.privateKey"), 
     publicKey: config.get("accounts.main.publicKey"), 
     keyIndex: 0, 
-    network,
+    network: network || defaultNetwork,
     address
   });
 }
@@ -66,7 +68,7 @@ function getAccount({ address, network }) {
  */
 function getAccountWithContract(name, network) {
   let address = getContractAddress(name)
-  return getAccount({ address, network })
+  return getAccount({ address, network: network || defaultNetwork })
 }
 
 /**
@@ -101,7 +103,7 @@ function getContract(name) {
  * @param {network} network for the deploy
  */
 async function createAccountAndDeploy(name, auth, network) {
-  const account = getAccount({ network });
+  const account = getAccount({ network: network || defaultNetwork });
 
   // create new account address 
   await account.create({

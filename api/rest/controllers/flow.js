@@ -1,6 +1,9 @@
 const deployer = require('../../../flow/migrations/deployer');
 const flow = require('../../../flow/lib/service');
+const main = require('../../index');
 
+// workaround a bug
+const kittens = [];
 
 /**
  * Get a cadance file replaced with address by name and type
@@ -47,6 +50,7 @@ async function mintTokens(address) {
  * @param {*} address receiver of kitten
  */
 async function mintKittens(address) {
+  kittens.push(address);
   return flow.mintKittens(address);
 }
 
@@ -55,5 +59,6 @@ module.exports = {
   getCadance, 
   getAllCadance, 
   mintTokens, 
-  mintKittens 
+  mintKittens,
+  kittens
 };

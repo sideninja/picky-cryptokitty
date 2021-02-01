@@ -80,16 +80,10 @@ pub contract Kitty: NonFungibleToken {
             // todo make logic based on tokens success but also change interface to food token
             // if food.chance > random() { destroy food }
             // emit KittyRefused() 
-            self.updateEnergy()
-
-            // double check if we forgot to destroy kitty with timers
-            if self.energy <= 0.0 {
-                destroy food
-                return
-            }
-
-            // todo change energy to get/set variable where you calculate current enrgy in getters and check in setters !!!!!!!!!!!!!!!!!!
-            self.energy = self.energy + food.balance;
+            //self.updateEnergy()
+            
+            // todo change energy to get/set variable where you calculate current enrgy in getters and check in setters !!!
+            self.energy = self.energy + food.balance
 
             // max out energy
             if self.energy > self.maxEnergy {
@@ -102,8 +96,11 @@ pub contract Kitty: NonFungibleToken {
         }
 
         pub fun updateEnergy() {
-            let lastFedDiffMinutes = self.lastFed; //getCurrentBlock().timestamp - self.lastFed / 1000.0 / 60.0
-            let consumedEnergy = self.energyConsumptionPerMinute * lastFedDiffMinutes
+            /* ===== BUG CADANCE TIMESTAMP - temporary workaround change after bugfix
+                let lastFedDiffMinutes = getCurrentBlock().timestamp - self.lastFed / 1000.0 / 60.0
+                let consumedEnergy = self.energyConsumptionPerMinute * lastFedDiffMinutes
+            */
+            let consumedEnergy = 10.0;
 
             self.energy = self.energy - consumedEnergy
 
@@ -164,9 +161,6 @@ pub contract Kitty: NonFungibleToken {
         pub fun checkKitty(id: UInt64) {
             let kitty <- self.ownedNFTs.remove(key: id)! as! @Kitty.NFT
             
-            // todo remove this after bugfix
-            kitty.lastFed = kitty.lastFed + 2.0
-
             // update kitty energy level
             kitty.updateEnergy()
 

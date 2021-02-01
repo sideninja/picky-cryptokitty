@@ -10,7 +10,7 @@ body {
 #kitten {
   position: absolute;
   left: calc(50% - 200px);
-  top: calc(50% - 400px);
+  top: calc(50% - 450px);
 }
 #kitten #kitten-image {
   width: 490px;
@@ -34,14 +34,15 @@ h2 {
   border: solid 2px #31323d;
 }
 #energy-bar i {
-  width: 50%;
+  width: 0%;
   background-color: #cf5be8;
   height: 40px;
   display: inline-block;
   border-radius: 30px;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  
+  -webkit-transition: width 2s ease-in-out;
+  -moz-transition: width 2s ease-in-out;
+  -o-transition: width 2s ease-in-out;
+  transition: width 2s ease-in-out;
 }
 #actions a {
   text-decoration: none;
@@ -74,4 +75,32 @@ h2 {
   margin: 0;
   color: #31323d;
   font-size: 18px;
+}
+
+
+.speech-bubble {
+  display: none;
+  position: absolute;
+  top: calc(50% - 550px);
+	background: #31323d;
+  border-radius: 60px;
+  margin-bottom: 60px;
+  width: 300px;
+  color: #fff;
+  padding: 32px;
+  font-weight: 700;
+  text-align: center;
+}
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border: 16px solid transparent;
+  border-top-color: #31323d;
+	border-bottom: 0; 
+	margin-left: -16px;
+	margin-bottom: -16px;
 }

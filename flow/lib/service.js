@@ -46,5 +46,25 @@ async function mintKittens(address) {
   return result;
 }
 
+/**
+ * Update kitten for the address
+ */
+async function updateKitten(address) {
+  console.log(`udpate kitten for ${address}`);
 
-module.exports = { mintHairBalls, mintKittens };
+  const kittyAccount = deployer.getAccountWithContract('Kitty');
+
+  result = await kittyAccount.sendTransaction({
+    transaction: deployer.getTransaction('check_kitten'),
+    args: [
+      fcl.arg(address, t.Address),
+      fcl.arg(1, t.UInt64)
+    ],
+    proposer: kittyAccount,
+    authorizations: [kittyAccount],
+    payer: kittyAccount
+  });
+}
+
+
+module.exports = { mintHairBalls, mintKittens, updateKitten };

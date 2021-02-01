@@ -21,9 +21,6 @@ let mainAccount = new Account({
  */
 async function createAndSetupAccount(flow) {
   
-  let balance = await mainAccount.getBalance();
-  console.log(balance);
-
   let userAccount = await mainAccount
     .create({ 
       proposer: mainAccount, 
@@ -31,7 +28,7 @@ async function createAndSetupAccount(flow) {
       authorizations: [mainAccount] 
     });
 
-  console.log(userAccount.getAddress());
+  console.log(`account created: ${userAccount.getAddress()}`);
   
   let result = await userAccount.sendTransaction({
     transaction: flow.setup_account_hairball,
@@ -41,7 +38,7 @@ async function createAndSetupAccount(flow) {
     authorizations: [userAccount]
   });
 
-  console.log('account setup ft', result);
+  console.log('account setup:', result);
 
   result = await userAccount.sendTransaction({
     transaction: flow.setup_account_kitty,
@@ -55,7 +52,7 @@ async function createAndSetupAccount(flow) {
 }
 
 /**
- * Fetch account token balance
+ * Fetch account token balance and update Ui
  * @param {*} flow 
  * @param {*} userAccount 
  */
@@ -70,6 +67,46 @@ async function updateBalance(flow, userAccount) {
   updateBalanceUI(balance);
 }
 
+/**
+ * Update kitten from the flow network and update Ui
+ * @param {*} flow 
+ * @param {*} userAccount 
+ */
+async function updateKitten(flow, userAccount) {
+    // fetch kitten from account
+    let kitten = await userAccount.sendScript({
+      script: flow.get_kitten,
+      args: [ 
+        fcl.arg(userAccount.getAddress(), t.Address), 
+        fcl.arg(1, t.UInt64)
+      ]
+    });
+    console.log('our kitten', kitten);
+
+    updateKittenUI(kitten);
+}
+
+/**
+ * Feed kitten and update UI
+ * @param {*} flow 
+ * @param {*} userAccount 
+ */
+async function feedKitten(flow, userAccount) {
+  let feed = await userAccount.sendTransaction({
+    transaction: flow.feed_kitten,
+    args: [
+      fcl.arg(1, t.UInt64),
+      fcl.arg("5.0", t.UFix64)
+    ],
+    payer: userAccount,
+    authorizations: [userAccount],
+    proposer: userAccount
+  });
+
+  console.log('kitten fed');
+  await updateKitten(flow, userAccount);
+  await updateBalance(flow, userAccount);
+}
 
 /** --------------------------------------------------------
  * Main Section
@@ -87,21 +124,18 @@ async function updateBalance(flow, userAccount) {
 
   updateAddressUI(userAccount.getAddress());
 
-  // create a kitten for us and fetch it
-  await Api.getKitten(userAccount.getAddress());
-  // fetch kitten from account
-  let kitten = await userAccount.sendScript({
-    script: flow.get_kitten,
-    args: [ 
-      fcl.arg(userAccount.getAddress(), t.Address), 
-      fcl.arg(1, t.UInt64)
-    ]
-  });
-  console.log('our kitten', kitten);
+  // update account balance
   await updateBalance(flow, userAccount);
   
+  // create a kitten for us and fetch it
+  await Api.getKitten(userAccount.getAddress());
+  await updateKitten(flow, userAccount);
+
+  // update kitten from flow and update ui
+  setInterval(() => updateKitten(flow, userAccount), 5000);
+
   setupInteractions(flow, userAccount);
-  
+
 })();
 
 
@@ -116,6 +150,11 @@ function setupInteractions(flow, userAccount) {
     await updateBalance(flow, userAccount);
   });
 
+  $("#feed-kitten").click(async () => {
+    await feedKitten(flow, userAccount);
+    kittenFedUI();
+  });
+
 }
 
 function updateAddressUI(address) {
@@ -126,6 +165,29 @@ function updateBalanceUI(balance) {
   $("#balance").html(balance);
 }
 
-function updateEnergy() {
+function updateKittenUI(kitten) {
+  $("#energy-bar i").css("width", `${kitten.energy}%`);
 
+  if (kitten.energy <= 10) {
+    $("#kitten-image").fadeOut();
+    
+    $(".speech-bubble").html("GAME OVER!!!!  I WILL FIND A BETTER HUMAN TO TAKE CARE OF ME !!!!");
+    $(".speech-bubble").fadeIn();
+  }
+}
+
+function kittenFedUI() {
+  let dialogs = [
+    "I'll take it but I don't have to like it.",
+    "Your food is bearly enough",
+    "As long as you feed me we can be friends, but don't get any ideas.",
+    "Thank you for the food, tonight you can sleep",
+    "I will take the food but I don't have to thank you",
+    "If this is the best food you got we got problems"
+  ];
+
+  $(".speech-bubble").html(dialogs[Math.floor(Math.random() * dialogs.length-1)])
+
+  $(".speech-bubble").fadeIn(1000);
+  setTimeout(() => $(".speech-bubble").fadeOut(1000), 3000);
 }

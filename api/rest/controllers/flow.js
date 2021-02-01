@@ -28,7 +28,8 @@ async function getAllCadance() {
     get_collection_ids: deployer.getScript('get_collection_ids'),
     feed_kitten: deployer.getTransaction('feed_kitten'),
     setup_account_hairball: deployer.getTransaction('setup_account_hairball'),
-    setup_account_kitty: deployer.getTransaction('setup_account_kitty')
+    setup_account_kitty: deployer.getTransaction('setup_account_kitty'),
+    get_kitten: deployer.getScript('get_kitten')
   };
 }
 

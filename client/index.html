@@ -1,5 +1,40 @@
 <html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;300;400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./style.css">
+  </head>
 <body>
+
+  <div id="kitten">
+    <div id="kitten-image"></div>
+    <div id="energy">
+      <h2>ENERGY REMAINING</h2>
+      <div id="energy-bar"><i></i></div>
+    </div>
+    <div id="account">
+      <h2>ACCOUNT</h2>
+
+      <div class="account-data">
+        <p>Address</p>
+        <h4 id="address"></h4>
+      </div>
+      <div class="account-data">
+        <p>Balance</p>
+        <h4 id="balance"></h4>
+      </div>
+    </div>
+    <div id="actions">
+      <a href="#" id="feed-kitten">FEED KITTEN</a>
+      <a href="#" id="get-tokens">GET TOKENS</a>
+    </div>
+  </div>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
   <script src="./index.js"></script>
 </body>
 </html>

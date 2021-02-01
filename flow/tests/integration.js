@@ -32,7 +32,7 @@ const deployer = require('../migrations/deployer');
   );
 
   // user Joe account
-  let accountJoe = deployer.getAccount();
+  let accountJoe = deployer.getAccount({});
 
   accountJoe = await accountJoe.create({
     proposer: mainAccount,
@@ -173,13 +173,23 @@ const deployer = require('../migrations/deployer');
 
   result = await mainAccount.sendScript({
     script: deployer.getScript('get_hairball_balance'),
-    args: [fcl.arg(accountJoe.getAddress(), t.Address)]
+    args: [ fcl.arg(accountJoe.getAddress(), t.Address) ]
   });
 
   console.log('new hairball balance');
   console.log(result);
 
 
+  result = await mainAccount.sendScript({
+    script: deployer.getScript('get_kitten'),
+    args: [ 
+      fcl.arg(accountJoe.getAddress(), t.Address),
+      fcl.arg(1, t.UInt64)
+    ]
+  })
+
+  console.log('got kitty');
+  console.log(result);
 
 
 

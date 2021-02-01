@@ -1,6 +1,7 @@
 const config = require('config');
 const restify = require('restify');
 const flow = require('./flow');
+const setup = require('../../../flow/migrations/setup');
 
 var server = restify.createServer();
 
@@ -54,7 +55,10 @@ addHandler(
 addHandler(
   'get',
   '/flow',
-  req => flow.getAllCadance()
+  async req => {
+    await setup.init();
+    return flow.getAllCadance();
+  }
 )
 
 

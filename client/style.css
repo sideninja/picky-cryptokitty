@@ -1,0 +1,77 @@
+
+
+body {
+  background: rgb(181,33,165);
+  background: radial-gradient(circle, rgba(181,33,165,0.6587009803921569) 51%, rgba(115,0,255,0.5858718487394958) 98%);
+  font-family: 'Raleway', sans-serif;
+  color: #333;
+}
+
+#kitten {
+  position: absolute;
+  left: calc(50% - 200px);
+  top: calc(50% - 400px);
+}
+#kitten #kitten-image {
+  width: 490px;
+  height: 490px;
+  background-image: url("./res/kitty.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+h2 {
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+#energy-bar {
+  height: 40px;
+  width: 400px;
+  background-color: #aaa;
+  border-radius: 30px;
+  margin-bottom: 50px;
+  box-shadow: 0px 2px 7px rgba(0,0,0,0.3);
+  border: solid 2px #31323d;
+}
+#energy-bar i {
+  width: 50%;
+  background-color: #cf5be8;
+  height: 40px;
+  display: inline-block;
+  border-radius: 30px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  
+}
+#actions a {
+  text-decoration: none;
+  background-color: #cf5be8;
+  padding: 12px 32px;
+  border-radius: 30px;
+  display: inline-block;
+  margin-top: 10px;
+  box-shadow: 0px 2px 7px rgba(0,0,0,0.3);
+  color: #31323d;
+  font-weight: 700;
+  border: solid 2px #31323d;
+  font-size: 16px;
+}
+#actions a:last-of-type {
+  margin-left: 62px;
+}
+#account {
+  margin-bottom: 40px;
+}
+.account-data {
+  display: flex;
+  margin-bottom: 8px;
+}
+.account-data p {
+  min-width: 80px;
+  margin: 0;
+}
+.account-data h4 {
+  margin: 0;
+  color: #31323d;
+  font-size: 18px;
+}

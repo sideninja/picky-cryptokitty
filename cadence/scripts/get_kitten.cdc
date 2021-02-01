@@ -6,6 +6,7 @@ pub fun main(account: Address, id: UInt64): &Kitty.NFT {
     let collectionRef = acct.getCapability(Kitty.CollectionPublicPath).borrow<&{Kitty.KittyCollectionPublic}>()
         ?? panic("Could not borrow capability from public collection")
     
-    return collectionRef.borrowKitty(id: id)
+    let kitten = collectionRef.borrowKitty(id: id)
+    return kitten
 }
  

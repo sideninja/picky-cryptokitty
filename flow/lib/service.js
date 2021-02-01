@@ -1,48 +1,50 @@
-const deployer = require('../migrations/deploy');
+const deployer = require('../migrations/deployer');
+const fcl = require('@onflow/fcl');
+const t = require('@onflow/types');
 
-class Service {
+/**
+ * Mint hairballs ft token for account and specific amount
+ * @param {*} address address of the receiver of tokens
+ * @param {*} amount amount of tokens to be minted
+ */
+async function mintHairBalls(address, amount) {
+  console.log(`minting ${amount} tokens for ${address}`);
 
-  constructor() {
-    // init hairballs - minter
-    // init kittens - minter
-    const network = new Network({ node: config.get("flow.network") });
+  const hairballAccount = deployer.getAccountWithContract('HairBall');
 
-    // main account from flow emulator
-    const mainAccount = deployer.getAccount({
-      address: config.get("accounts.main.address"),
-      network
-    });
-  
-    await deployer.createAccountAndDeploy(
-      'HairBall', 
-      mainAccount, 
-      network
-    );
+  result = await hairballAccount.sendTransaction({
+    transaction: deployer.getTransaction('mint_hairballs'),
+    args: [
+      fcl.arg(address, t.Address),
+      fcl.arg(amount, t.UFix64)
+    ],
+    proposer: hairballAccount,
+    authorizations: [hairballAccount],
+    payer: hairballAccount
+  });
 
-    
-  }
-
-  mintHairBalls(address, amount) {
-    const hairballAccount = deployer.getAccountWithContract('HairBall', network);
-
-    result = await hairballAccount.sendTransaction({
-      transaction: deployer.getTransaction('mint_hairballs'),
-      args: [
-        fcl.arg(address, t.Address),
-        fcl.arg(amount, t.UFix64)
-      ],
-      proposer: hairballAccount,
-      authorizations: [hairballAccount],
-      payer: mainAccount,
-      network
-    });
-  
-  }
-
-  mintKittens() {
-
-  }
-
-  
-
+  return result;
 }
+
+/**
+ * Mint a new unique kitten for address 
+ * @param {*} address address of the kitten receiver 
+ */
+async function mintKittens(address) {
+  console.log(`minting kitty for ${address}`);
+
+  const kittyAccount = deployer.getAccountWithContract('Kitty');
+
+  result = await kittyAccount.sendTransaction({
+    transaction: deployer.getTransaction('mint_kittens'),
+    args: [fcl.arg(address, t.Address)],
+    proposer: kittyAccount,
+    payer: kittyAccount,
+    authorizations: [kittyAccount]
+  });
+
+  return result;
+}
+
+
+module.exports = { mintHairBalls, mintKittens };

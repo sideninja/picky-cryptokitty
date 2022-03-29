@@ -4,9 +4,9 @@ Example game built on top of Flow. PickyCryptokitty is decentralized application
 
 
 ### View Project Video :tada:
+*Click on video*
 [![Watch the demo](https://i.vimeocdn.com/video/1049645083_620.jpg)](https://player.vimeo.com/video/507129273)
 
-Better quality video: https://files.fm/f/dze8qdezs#
 
 ## Architecture :smiley_cat:
 
